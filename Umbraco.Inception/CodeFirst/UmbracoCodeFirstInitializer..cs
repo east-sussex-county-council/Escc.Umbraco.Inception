@@ -229,11 +229,7 @@ namespace Umbraco.Inception.CodeFirst
         /// <summary>
         /// Creates a new dataType
         /// </summary>
-        /// <param name="newContentType"></param>
-        /// <param name="tabName"></param>
-        /// <param name="dataTypeService"></param>
-        /// <param name="atTabGeneric"></param>
-        /// <param name="item"></param>
+        /// <param name="type">The type of your model that contains the prevalues for the custom data type.</param>
         public static void CreateCustomDataType(Type type)
         {                      
             UmbracoCustomDataTypeAttribute customDataTypeAttribute = type.GetCustomAttribute<UmbracoCustomDataTypeAttribute>();
