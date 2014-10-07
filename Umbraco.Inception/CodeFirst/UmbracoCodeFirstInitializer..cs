@@ -226,6 +226,48 @@ namespace Umbraco.Inception.CodeFirst
             }
         }
 
+<<<<<<< HEAD
+=======
+        /// <summary>
+        /// Creates a new dataType
+        /// </summary>
+        /// <param name="newContentType"></param>
+        /// <param name="tabName"></param>
+        /// <param name="dataTypeService"></param>
+        /// <param name="atTabGeneric"></param>
+        /// <param name="item"></param>
+        public static void CreateCustomDataType(Type type)
+        {                      
+            UmbracoCustomDataTypeAttribute customDataTypeAttribute = type.GetCustomAttribute<UmbracoCustomDataTypeAttribute>();
+            if (customDataTypeAttribute == null)
+            {
+                return;
+            }
+            else
+            {
+                var dataTypeService = ApplicationContext.Current.Services.DataTypeService;
+
+                List<IDataTypeDefinition> PropertyEditorAliases = dataTypeService.GetDataTypeDefinitionByPropertyEditorAlias(customDataTypeAttribute.PropertyEditorAlias).ToList(); // Obtains all the property editor alias names.
+
+                bool isNameInDatabase = PropertyEditorAliases.Exists(x => x.Name == customDataTypeAttribute.DataTypeName); // Checks to see if the data type name exist.
+
+                /* If not, create a new datatype based on the property editor used in the DataTypeDefinition below */
+                if (!isNameInDatabase)
+                {
+                    DataTypeDefinition dataTypeDefinition = new DataTypeDefinition(-1, customDataTypeAttribute.PropertyEditorAlias);
+                    dataTypeDefinition.Name = customDataTypeAttribute.DataTypeName;
+                    var preValuesAttributeProperty = customDataTypeAttribute.PreValues;  // error check needs to be added.
+
+                    var preValuesObjInstance = Activator.CreateInstance(preValuesAttributeProperty);
+                    var preValuesObjType = preValuesObjInstance.GetType();
+                    IDictionary<string, PreValue> preValues = (IDictionary<string, PreValue>)preValuesObjType.GetProperty("PreValues").GetValue(preValuesObjInstance, null);
+
+                    dataTypeService.SaveDataTypeAndPreValues(dataTypeDefinition, preValues);
+                }
+            }
+        }
+
+>>>>>>> new-feature-dataType
         #endregion Create
 
         #region Update
