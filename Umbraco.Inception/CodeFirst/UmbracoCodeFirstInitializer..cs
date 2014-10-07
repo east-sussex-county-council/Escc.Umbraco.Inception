@@ -226,8 +226,6 @@ namespace Umbraco.Inception.CodeFirst
             }
         }
 
-<<<<<<< HEAD
-=======
         /// <summary>
         /// Creates a new dataType
         /// </summary>
@@ -262,8 +260,6 @@ namespace Umbraco.Inception.CodeFirst
                 }
             }
         }
-
->>>>>>> new-feature-dataType
         #endregion Create
 
         #region Update
