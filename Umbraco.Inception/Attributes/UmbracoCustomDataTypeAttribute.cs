@@ -17,7 +17,7 @@ namespace Umbraco.Inception.Attributes
         public Type PreValues { get; set; }
 
         /// <summary>
-        /// Put this on the class that represents your data type you want to create and insert into the database.
+        /// Add on the class that represents your custom data type, so that the custom data type is inserted into the database.
         /// </summary>
         /// <param name="dataTypeName">Friendly name of the data type</param>
         /// <param name="propertyEditorAlias">Alias of the data type</param>
@@ -27,7 +27,6 @@ namespace Umbraco.Inception.Attributes
         {
             DataTypeName = dataTypeName;
             PropertyEditorAlias = propertyEditorAlias;
-            //PreValues = preValues;
             PreValues = preValues;
         }
     }
