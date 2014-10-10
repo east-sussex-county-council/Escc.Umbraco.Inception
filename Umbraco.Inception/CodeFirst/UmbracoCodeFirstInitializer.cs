@@ -117,6 +117,11 @@ namespace Umbraco.Inception.CodeFirst
             var currentTemplate = fileService.GetTemplate(attribute.ContentTypeAlias) as Template;
             if (currentTemplate == null)
             {
+                var directoryPath = string.Format(CultureInfo.InvariantCulture, "~/Views/");
+
+                var filePath = string.Format(CultureInfo.InvariantCulture, "~/Views/{0}.cshtml", attribute.ContentTypeAlias);
+                string physicalViewFileLocation = HostingEnvironment.MapPath(filePath);
+
                 string templatePath;
                 if (string.IsNullOrEmpty(attribute.TemplateLocation))
                 {
@@ -131,7 +136,16 @@ namespace Umbraco.Inception.CodeFirst
                 }
 
                 currentTemplate = new Template(templatePath, attribute.ContentTypeName, attribute.ContentTypeAlias);
-                CreateViewFile(attribute.MasterTemplate, currentTemplate, type, fileService);
+
+                if (System.IO.File.Exists(physicalViewFileLocation))
+                {
+                    currentTemplate = new Template(directoryPath, attribute.ContentTypeName, attribute.ContentTypeAlias);
+                    fileService.SaveTemplate(currentTemplate, 0);
+                }
+                else
+                {
+                    CreateViewFile(attribute.MasterTemplate, currentTemplate, type, fileService);
+                }
             }
 
             newContentType.AllowedTemplates = new ITemplate[] { currentTemplate };
