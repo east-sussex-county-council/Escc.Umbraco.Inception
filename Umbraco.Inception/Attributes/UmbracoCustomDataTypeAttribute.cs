@@ -15,6 +15,7 @@ namespace Umbraco.Inception.Attributes
         public string DataTypeName { get; set; }
         public string PropertyEditorAlias { get; set; }
         public Type PreValues { get; set; }
+        public DataTypeDatabaseType DatabaseType { get; set; }
 
         /// <summary>
         /// Add on the class that represents your custom data type, so that the custom data type is inserted into the database.
@@ -22,12 +23,12 @@ namespace Umbraco.Inception.Attributes
         /// <param name="dataTypeName">Friendly name of the data type</param>
         /// <param name="propertyEditorAlias">Alias of the data type</param>
         /// <param name="preValues">Initial values</param>      
-        public UmbracoCustomDataTypeAttribute(string dataTypeName, string propertyEditorAlias, Type preValues)
-        //public UmbracoCustomDataTypeAttribute(string dataTypeName, string propertyEditorAlias, Type preValues)
+        public UmbracoCustomDataTypeAttribute(string dataTypeName, string propertyEditorAlias, Type preValues, DataTypeDatabaseType dataTypeDatabaseType)
         {
             DataTypeName = dataTypeName;
             PropertyEditorAlias = propertyEditorAlias;
             PreValues = preValues;
+            DatabaseType = dataTypeDatabaseType;
         }
     }
 }
