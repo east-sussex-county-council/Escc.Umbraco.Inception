@@ -250,6 +250,7 @@ namespace Umbraco.Inception.CodeFirst
                 {
                     DataTypeDefinition dataTypeDefinition = new DataTypeDefinition(-1, customDataTypeAttribute.PropertyEditorAlias);
                     dataTypeDefinition.Name = customDataTypeAttribute.DataTypeName;
+                    dataTypeDefinition.DatabaseType = customDataTypeAttribute.DatabaseType;
                     var preValuesAttributeProperty = customDataTypeAttribute.PreValues;  // error check needs to be added.
 
                     var preValuesObjInstance = Activator.CreateInstance(preValuesAttributeProperty);
