@@ -192,7 +192,7 @@
     <Compile Include="BL\ICustomDataType.cs" />
     <Compile Include="BL\TabBase.cs" />
     <Compile Include="BL\UmbracoGeneratedBase.cs" />
-    <Compile Include="CodeFirst\UmbracoCodeFirstInitializer..cs" />
+    <Compile Include="CodeFirst\UmbracoCodeFirstInitializer.cs" />
     <Compile Include="Converters\ConverterHelper.cs" />
     <Compile Include="Converters\JsonConverter.cs" />
     <Compile Include="Converters\MediaIdConverter.cs" />
