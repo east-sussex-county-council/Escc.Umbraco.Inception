@@ -1,22 +1,22 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>Umbraco.Inception</id>
-    <version>1.1.0.0</version>
+    <id>Escc.Umbraco.Inception</id>
+    <version>2.0.0</version>
     <title>Umbraco Inception</title>
-    <authors>Florian Verdonck &amp; Dries Cauwels</authors>
+    <authors>Florian Verdonck &amp; Dries Cauwels &amp; ESCC</authors>
     <owners>Qite bvba</owners>
     <description>
-     A package to create a Code first approach for Umbraco (7)
+     A package to create a Code first approach for Umbraco 7
     </description>
     <releaseNotes>
     </releaseNotes>
     <summary>
-      A package to create a Code first approach for Umbraco (7). Check out https://github.com/Qite/Umbraco-Inception for more details.
+      A package to create a Code first approach for Umbraco 7, created by Qite and extended by ESCC. Check out https://github.com/east-sussex-county-council/Umbraco-Inception for more details.
     </summary>
     <language>en-US</language>
-    <projectUrl>https://github.com/Qite/Umbraco-Inception</projectUrl>
-    <iconUrl>http://qite.be/img/umbraco-inception-icon.png</iconUrl>
+    <projectUrl>https://github.com/east-sussex-county-council/Umbraco-Inception</projectUrl>
+    <iconUrl>https://www.eastsussex.gov.uk/apple-touch-icon.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <licenseUrl>http://opensource.org/licenses/Apache-2.0</licenseUrl>
     <copyright>Copyright Qite  2014</copyright>
