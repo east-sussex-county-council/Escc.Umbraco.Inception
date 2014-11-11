@@ -139,8 +139,14 @@ namespace Umbraco.Inception.CodeFirst
 
                 if (System.IO.File.Exists(physicalViewFileLocation))
                 {
+                    // Umbraco will create a view file regardless, overwriting what's there. If the MVC view is already there we can 
+                    // protect it by tricking Umbraco into going down the WebForms route instead. It creates a .master file, which we
+                    // can immediately delete. Importantly it creates the database record for the template which is what we want.
                     currentTemplate = new Template(directoryPath, attribute.ContentTypeName, attribute.ContentTypeAlias);
                     fileService.SaveTemplate(currentTemplate, 0);
+
+                    var masterPage = HostingEnvironment.MapPath(string.Format(CultureInfo.InvariantCulture, "~/masterpages/{0}.master", attribute.ContentTypeAlias));
+                    if (!string.IsNullOrEmpty(masterPage) && System.IO.File.Exists(masterPage)) System.IO.File.Delete(masterPage);
                 }
                 else
                 {
