@@ -70,6 +70,12 @@
     <Content Include="lib\net45\Umbraco.Inception.dll" />
     <Content Include="lib\net45\Umbraco.Inception.pdb" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Umbraco.Inception\Umbraco.Inception.csproj">
+      <Project>{8780ea62-41da-4a2e-a51a-6960efbef837}</Project>
+      <Name>Umbraco.Inception</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
