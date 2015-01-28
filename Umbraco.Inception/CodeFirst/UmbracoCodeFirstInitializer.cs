@@ -29,22 +29,40 @@ namespace Umbraco.Inception.CodeFirst
             var fileService = ApplicationContext.Current.Services.FileService;
             var dataTypeService = ApplicationContext.Current.Services.DataTypeService;
 
-            UmbracoContentTypeAttribute attribute = type.GetCustomAttribute<UmbracoContentTypeAttribute>();
-            if (attribute == null) return;
-
-            if (!contentTypeService.GetAllContentTypes().Any(x => x != null && x.Alias == attribute.ContentTypeAlias))
+            var contentTypeAttribute = type.GetCustomAttribute<UmbracoContentTypeAttribute>();
+            if (contentTypeAttribute != null)
             {
-                CreateContentType(contentTypeService, fileService, attribute, type, dataTypeService);
+                if (!contentTypeService.GetAllContentTypes().Any(x => x != null && x.Alias == contentTypeAttribute.ContentTypeAlias))
+                {
+                    CreateContentType(contentTypeService, fileService, contentTypeAttribute, type, dataTypeService);
+                }
+                else
+                {
+                    //update
+                    IContentType contentType = contentTypeService.GetContentType(contentTypeAttribute.ContentTypeAlias);
+                    UpdateContentType(contentTypeService, fileService, contentTypeAttribute, contentType, type, dataTypeService);
+                }
+                return;
             }
-            else
+
+            var mediaTypeAttribute = type.GetCustomAttribute<UmbracoMediaTypeAttribute>();
+            if (mediaTypeAttribute != null)
             {
-                //update
-                IContentType contentType = contentTypeService.GetContentType(attribute.ContentTypeAlias);
-                UpdateContentType(contentTypeService, fileService, attribute, contentType, type, dataTypeService);
+                if (!contentTypeService.GetAllMediaTypes().Any(x => x != null && x.Alias == mediaTypeAttribute.MediaTypeAlias))
+                {
+                    CreateMediaType(contentTypeService, fileService, mediaTypeAttribute, type, dataTypeService);
+                }
+                else
+                {
+                    //update
+                    IMediaType mediaType = contentTypeService.GetMediaType(mediaTypeAttribute.MediaTypeAlias);
+                    UpdateMediaType(contentTypeService, fileService, mediaTypeAttribute, mediaType, type, dataTypeService);
+                }
+                return;
             }
         }
 
-        #region Create
+        #region Create content types
 
         /// <summary>
         /// This method is called when the Content Type declared in the attribute hasn't been found in Umbraco
@@ -81,6 +99,7 @@ namespace Umbraco.Inception.CodeFirst
             newContentType.Name = attribute.ContentTypeName;
             newContentType.Alias = attribute.ContentTypeAlias;
             newContentType.Icon = attribute.Icon;
+            newContentType.Description = attribute.Description;
 
             if (attribute.CreateMatchingView)
             {
@@ -167,7 +186,7 @@ namespace Umbraco.Inception.CodeFirst
         /// <param name="newContentType"></param>
         /// <param name="model"></param>
         /// <param name="dataTypeService"></param>
-        private static void CreateTabs(IContentType newContentType, Type model, IDataTypeService dataTypeService)
+        private static void CreateTabs(IContentTypeBase newContentType, Type model, IDataTypeService dataTypeService)
         {
             var properties = model.GetProperties().Where(x => x.DeclaringType == model && x.GetCustomAttribute<UmbracoTabAttribute>() != null).ToArray();
             int length = properties.Length;
@@ -191,7 +210,7 @@ namespace Umbraco.Inception.CodeFirst
         /// <param name="tabName"></param>
         /// <param name="dataTypeService"></param>
         /// <param name="atTabGeneric"></param>
-        private static void CreateProperties(PropertyInfo propertyInfo, IContentType newContentType, string tabName, IDataTypeService dataTypeService, bool atTabGeneric = false)
+        private static void CreateProperties(PropertyInfo propertyInfo, IContentTypeBase newContentType, string tabName, IDataTypeService dataTypeService, bool atTabGeneric = false)
         {
             //type is from TabBase
             Type type = propertyInfo.PropertyType;
@@ -213,7 +232,7 @@ namespace Umbraco.Inception.CodeFirst
         /// <param name="dataTypeService"></param>
         /// <param name="atTabGeneric"></param>
         /// <param name="item"></param>
-        private static void CreateProperty(IContentType newContentType, string tabName, IDataTypeService dataTypeService, bool atTabGeneric, PropertyInfo item)
+        private static void CreateProperty(IContentTypeBase newContentType, string tabName, IDataTypeService dataTypeService, bool atTabGeneric, PropertyInfo item)
         {
             UmbracoPropertyAttribute attribute = item.GetCustomAttribute<UmbracoPropertyAttribute>();
 
@@ -231,7 +250,7 @@ namespace Umbraco.Inception.CodeFirst
             {
                 PropertyType propertyType = new PropertyType(dataTypeDef);
                 propertyType.Name = attribute.Name;
-                propertyType.Alias = (atTabGeneric ? attribute.Alias : UmbracoCodeFirstExtensions.HyphenToUnderscore(UmbracoCodeFirstExtensions.ParseUrl(attribute.Alias + "_" + tabName, false)));
+                propertyType.Alias = ((atTabGeneric || !attribute.AddTabAliasToPropertyAlias) ? attribute.Alias : UmbracoCodeFirstExtensions.HyphenToUnderscore(UmbracoCodeFirstExtensions.ParseUrl(attribute.Alias + "_" + tabName, false)));
                 propertyType.Description = attribute.Description;
                 propertyType.Mandatory = attribute.Mandatory;
                 propertyType.SortOrder = attribute.SortOrder;
@@ -247,6 +266,7 @@ namespace Umbraco.Inception.CodeFirst
             }
         }
 
+<<<<<<< HEAD
         /// <summary>
         /// Creates a new dataType
         /// </summary>
@@ -283,8 +303,69 @@ namespace Umbraco.Inception.CodeFirst
             }
         }
         #endregion Create
+=======
+        #endregion Create content types
 
-        #region Update
+        #region Create media types
+
+        /// <summary>
+        /// This method is called when the Media Type declared in the attribute hasn't been found in Umbraco
+        /// </summary>
+        /// <param name="contentTypeService"></param>
+        /// <param name="fileService"></param>
+        /// <param name="attribute"></param>
+        /// <param name="type"></param>
+        /// <param name="dataTypeService"></param>
+        private static void CreateMediaType(IContentTypeService contentTypeService, IFileService fileService,
+            UmbracoMediaTypeAttribute attribute, Type type, IDataTypeService dataTypeService)
+        {
+            IMediaType newMediaType;
+            Type parentType = type.BaseType;
+            if (parentType != null && parentType != typeof(UmbracoGeneratedBase) && parentType.GetBaseTypes(false).Any(x => x == typeof(UmbracoGeneratedBase)))
+            {
+                UmbracoMediaTypeAttribute parentAttribute = parentType.GetCustomAttribute<UmbracoMediaTypeAttribute>();
+                if (parentAttribute != null)
+                {
+                    string parentAlias = parentAttribute.MediaTypeAlias;
+                    IMediaType parentContentType = contentTypeService.GetMediaType(parentAlias);
+                    newMediaType = new MediaType(parentContentType);
+                }
+                else
+                {
+                    throw new Exception("The given base class has no UmbracoMediaTypeAttribute");
+                }
+            }
+            else
+            {
+                newMediaType = new MediaType(-1);
+            }
+
+            newMediaType.Name = attribute.MediaTypeName;
+            newMediaType.Alias = attribute.MediaTypeAlias;
+            newMediaType.Icon = attribute.Icon;
+            newMediaType.Description = attribute.Description;
+            newMediaType.AllowedAsRoot = attribute.AllowedAtRoot;
+            newMediaType.IsContainer = attribute.EnableListView;
+            newMediaType.AllowedContentTypes = FetchAllowedContentTypes(attribute.AllowedChildren, contentTypeService);
+
+            //create tabs
+            CreateTabs(newMediaType, type, dataTypeService);
+            
+            //create properties on the generic tab
+            var propertiesOfRoot = type.GetProperties().Where(x => x.GetCustomAttribute<UmbracoPropertyAttribute>() != null);
+            foreach (var item in propertiesOfRoot)
+            {
+                CreateProperty(newMediaType, null, dataTypeService, true, item);
+            }
+
+            //Save and persist the media Type
+            contentTypeService.Save(newMediaType, 0);
+        }
+
+        #endregion
+>>>>>>> new-feature-mediaType
+
+        #region Update content types
 
         /// <summary>
         /// Update the existing content Type based on the data in the attributes
@@ -300,6 +381,7 @@ namespace Umbraco.Inception.CodeFirst
             contentType.Name = attribute.ContentTypeName;
             contentType.Alias = attribute.ContentTypeAlias;
             contentType.Icon = attribute.Icon;
+            contentType.Description = attribute.Description;
             contentType.IsContainer = attribute.EnableListView;
             contentType.AllowedContentTypes = FetchAllowedContentTypes(attribute.AllowedChildren, contentTypeService);
             contentType.AllowedAsRoot = attribute.AllowedAtRoot;
@@ -360,7 +442,7 @@ namespace Umbraco.Inception.CodeFirst
         /// <param name="contentType"></param>
         /// <param name="type"></param>
         /// <param name="dataTypeService"></param>
-        private static void VerifyProperties(IContentType contentType, Type type, IDataTypeService dataTypeService)
+        private static void VerifyProperties(IContentTypeBase contentType, Type type, IDataTypeService dataTypeService)
         {
             var properties = type.GetProperties().Where(x => x.GetCustomAttribute<UmbracoTabAttribute>() != null).ToArray();
             List<string> propertiesThatShouldExist = new List<string>();
@@ -404,7 +486,7 @@ namespace Umbraco.Inception.CodeFirst
         /// <param name="tabName"></param>
         /// <param name="dataTypeService"></param>
         /// <returns></returns>
-        private static IEnumerable<string> VerifyAllPropertiesOnTab(PropertyInfo propertyTab, IContentType contentType, string tabName, IDataTypeService dataTypeService)
+        private static IEnumerable<string> VerifyAllPropertiesOnTab(PropertyInfo propertyTab, IContentTypeBase contentType, string tabName, IDataTypeService dataTypeService)
         {
             Type type = propertyTab.PropertyType;
             var properties = type.GetProperties().Where(x => x.GetCustomAttribute<UmbracoPropertyAttribute>() != null);
@@ -420,7 +502,7 @@ namespace Umbraco.Inception.CodeFirst
             return new string[0];
         }
 
-        private static string VerifyExistingProperty(IContentType contentType, string tabName, IDataTypeService dataTypeService, PropertyInfo item, bool atGenericTab = false)
+        private static string VerifyExistingProperty(IContentTypeBase contentType, string tabName, IDataTypeService dataTypeService, PropertyInfo item, bool atGenericTab = false)
         {
             UmbracoPropertyAttribute attribute = item.GetCustomAttribute<UmbracoPropertyAttribute>();
             IDataTypeDefinition dataTypeDef;
@@ -449,7 +531,7 @@ namespace Umbraco.Inception.CodeFirst
 
                 property.Name = attribute.Name;
                 //TODO: correct name?
-                property.Alias = (atGenericTab ? attribute.Alias : UmbracoCodeFirstExtensions.HyphenToUnderscore(UmbracoCodeFirstExtensions.ParseUrl(attribute.Alias + "_" + tabName, false)));
+                property.Alias = ((atGenericTab || !attribute.AddTabAliasToPropertyAlias) ? attribute.Alias : UmbracoCodeFirstExtensions.HyphenToUnderscore(UmbracoCodeFirstExtensions.ParseUrl(attribute.Alias + "_" + tabName, false)));
                 property.Description = attribute.Description;
                 property.Mandatory = attribute.Mandatory;
 
@@ -470,7 +552,64 @@ namespace Umbraco.Inception.CodeFirst
             return null;
         }
 
-        #endregion Update
+        #endregion Update content types
+
+        #region Update media types
+
+        /// <summary>
+        /// Update the existing content Type based on the data in the attributes
+        /// </summary>
+        /// <param name="contentTypeService"></param>
+        /// <param name="fileService"></param>
+        /// <param name="attribute"></param>
+        /// <param name="mediaType"></param>
+        /// <param name="type"></param>
+        /// <param name="dataTypeService"></param>
+        private static void UpdateMediaType(IContentTypeService contentTypeService, IFileService fileService, UmbracoMediaTypeAttribute attribute, IMediaType mediaType, Type type, IDataTypeService dataTypeService)
+        {
+            mediaType.Name = attribute.MediaTypeName;
+            mediaType.Alias = attribute.MediaTypeAlias;
+            mediaType.Icon = attribute.Icon;
+            mediaType.Description = attribute.Description;
+            mediaType.IsContainer = attribute.EnableListView;
+            mediaType.AllowedContentTypes = FetchAllowedContentTypes(attribute.AllowedChildren, contentTypeService);
+            mediaType.AllowedAsRoot = attribute.AllowedAtRoot;
+
+            Type parentType = type.BaseType;
+            if (parentType != null && parentType != typeof(UmbracoGeneratedBase) && parentType.GetBaseTypes(false).Any(x => x == typeof(UmbracoGeneratedBase)))
+            {
+                UmbracoMediaTypeAttribute parentAttribute = parentType.GetCustomAttribute<UmbracoMediaTypeAttribute>();
+                if (parentAttribute != null)
+                {
+                    string parentAlias = parentAttribute.MediaTypeAlias;
+                    IMediaType parentContentType = contentTypeService.GetMediaType(parentAlias);
+                    mediaType.ParentId = parentContentType.Id;
+                }
+                else
+                {
+                    throw new Exception("The given base class has no UmbracoMediaTypeAttribute");
+                }
+            }
+
+            VerifyProperties(mediaType, type, dataTypeService);
+
+            //verify if a tab has no properties, if so remove
+            var propertyGroups = mediaType.PropertyGroups.ToArray();
+            int length = propertyGroups.Length;
+            for (int i = 0; i < length; i++)
+            {
+                if (propertyGroups[i].PropertyTypes.Count == 0)
+                {
+                    //remove
+                    mediaType.RemovePropertyGroup(propertyGroups[i].Name);
+                }
+            }
+
+            //persist
+            contentTypeService.Save(mediaType, 0);
+        }
+
+        #endregion
 
         #region Shared logic
 
