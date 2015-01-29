@@ -266,7 +266,6 @@ namespace Umbraco.Inception.CodeFirst
             }
         }
 
-<<<<<<< HEAD
         /// <summary>
         /// Creates a new dataType
         /// </summary>
@@ -302,8 +301,7 @@ namespace Umbraco.Inception.CodeFirst
                 }
             }
         }
-        #endregion Create
-=======
+
         #endregion Create content types
 
         #region Create media types
@@ -363,7 +361,6 @@ namespace Umbraco.Inception.CodeFirst
         }
 
         #endregion
->>>>>>> new-feature-mediaType
 
         #region Update content types
 
