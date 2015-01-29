@@ -136,6 +136,11 @@ namespace Umbraco.Inception.CodeFirst
             var currentTemplate = fileService.GetTemplate(attribute.ContentTypeAlias) as Template;
             if (currentTemplate == null)
             {
+                var directoryPath = string.Format(CultureInfo.InvariantCulture, "~/Views/");
+
+                var filePath = string.Format(CultureInfo.InvariantCulture, "~/Views/{0}.cshtml", attribute.ContentTypeAlias);
+                string physicalViewFileLocation = HostingEnvironment.MapPath(filePath);
+
                 string templatePath;
                 if (string.IsNullOrEmpty(attribute.TemplateLocation))
                 {
@@ -150,7 +155,22 @@ namespace Umbraco.Inception.CodeFirst
                 }
 
                 currentTemplate = new Template(templatePath, attribute.ContentTypeName, attribute.ContentTypeAlias);
-                CreateViewFile(attribute.MasterTemplate, currentTemplate, type, fileService);
+
+                if (System.IO.File.Exists(physicalViewFileLocation))
+                {
+                    // Umbraco will create a view file regardless, overwriting what's there. If the MVC view is already there we can 
+                    // protect it by tricking Umbraco into going down the WebForms route instead. It creates a .master file, which we
+                    // can immediately delete. Importantly it creates the database record for the template which is what we want.
+                    currentTemplate = new Template(directoryPath, attribute.ContentTypeName, attribute.ContentTypeAlias);
+                    fileService.SaveTemplate(currentTemplate, 0);
+
+                    var masterPage = HostingEnvironment.MapPath(string.Format(CultureInfo.InvariantCulture, "~/masterpages/{0}.master", attribute.ContentTypeAlias));
+                    if (!string.IsNullOrEmpty(masterPage) && System.IO.File.Exists(masterPage)) System.IO.File.Delete(masterPage);
+                }
+                else
+                {
+                    CreateViewFile(attribute.MasterTemplate, currentTemplate, type, fileService);
+                }
             }
 
             newContentType.AllowedTemplates = new ITemplate[] { currentTemplate };
