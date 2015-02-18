@@ -17,6 +17,7 @@ namespace Umbraco.Inception.Attributes
         public bool Mandatory { get; set; }
         public string Description { get; set; }
         public Type ConverterType { get; set; }
+        public string ValidationRegularExpression { get; set; }
 
         /// <summary>
         /// Put this on properties of your class that inherits from TabBase

@@ -213,6 +213,7 @@ namespace Umbraco.Inception.CodeFirst
                 propertyType.Alias = (atTabGeneric ? attribute.Alias : UmbracoCodeFirstExtensions.HyphenToUnderscore(UmbracoCodeFirstExtensions.ParseUrl(attribute.Alias + "_" + tabName, false)));
                 propertyType.Description = attribute.Description;
                 propertyType.Mandatory = attribute.Mandatory;
+                propertyType.ValidationRegExp = attribute.ValidationRegularExpression;
 
                 if (atTabGeneric)
                 {
