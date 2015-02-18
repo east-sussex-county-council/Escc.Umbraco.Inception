@@ -18,6 +18,7 @@ namespace Umbraco.Inception.Attributes
         public string Description { get; set; }
         public Type ConverterType { get; set; }
         public int SortOrder { get; set; }
+        public string ValidationRegularExpression { get; set; }
         public bool AddTabAliasToPropertyAlias { get; set; }
 
         /// <summary>

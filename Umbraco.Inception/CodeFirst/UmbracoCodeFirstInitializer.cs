@@ -254,6 +254,7 @@ namespace Umbraco.Inception.CodeFirst
                 propertyType.Description = attribute.Description;
                 propertyType.Mandatory = attribute.Mandatory;
                 propertyType.SortOrder = attribute.SortOrder;
+                propertyType.ValidationRegExp = attribute.ValidationRegularExpression;
 
                 if (atTabGeneric)
                 {
