@@ -133,7 +133,8 @@ namespace Umbraco.Inception.CodeFirst
         /// <param name="newContentType"></param>
         private static void CreateMatchingView(IFileService fileService, UmbracoContentTypeAttribute attribute, Type type, IContentType newContentType)
         {
-            var currentTemplate = fileService.GetTemplate(attribute.ContentTypeAlias) as Template;
+            var templateAlias = String.IsNullOrEmpty(attribute.MasterTemplate) ? attribute.ContentTypeAlias : attribute.MasterTemplate;
+            var currentTemplate = fileService.GetTemplate(templateAlias) as Template;
             if (currentTemplate == null)
             {
                 var directoryPath = string.Format(CultureInfo.InvariantCulture, "~/Views/");
