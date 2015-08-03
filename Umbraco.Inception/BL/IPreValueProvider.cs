@@ -7,7 +7,10 @@ using Umbraco.Core.Models;
 
 namespace Umbraco.Inception.BL
 {
-    public interface ICustomDataType
+    /// <summary>
+    /// A class that provides prevalues when creating an Umbraco datatype
+    /// </summary>
+    public interface IPreValueProvider
     {
         IDictionary<string, PreValue> PreValues { get; }
     }

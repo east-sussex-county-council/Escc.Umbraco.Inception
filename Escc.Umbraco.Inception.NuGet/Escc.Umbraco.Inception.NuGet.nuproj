@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>f8d31cff-8003-4eef-932a-847c272a8e80</ProjectGuid>
+    <OutputPath>Bin\</OutputPath>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <NuBuildVersionSource>Manual</NuBuildVersionSource>
+    <NuBuildVersionFileName>True</NuBuildVersionFileName>
+    <NuBuildAddBinariesToSubfolder>False</NuBuildAddBinariesToSubfolder>
+    <NuBuildIncludePdbs>False</NuBuildIncludePdbs>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Escc.Umbraco.Inception.NuGet.nuspec" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Umbraco.Inception\Umbraco.Inception.csproj">
+      <Name>Umbraco.Inception</Name>
+      <Project>{8780ea62-41da-4a2e-a51a-6960efbef837}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\NuBuild\v1\NuBuild.targets" />
+</Project>

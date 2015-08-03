@@ -60,6 +60,13 @@ namespace Umbraco.Inception.CodeFirst
                 }
                 return;
             }
+
+            var dataTypeAttribute = type.GetCustomAttribute<UmbracoDataTypeAttribute>();
+            if (dataTypeAttribute != null)
+            {
+                CreateDataType(type);
+                return;
+            }
         }
 
         #region Create content types
@@ -272,10 +279,10 @@ namespace Umbraco.Inception.CodeFirst
         /// Creates a new dataType
         /// </summary>
         /// <param name="type">The type of your model that contains the prevalues for the custom data type.</param>
-        public static void CreateCustomDataType(Type type)
+        public static void CreateDataType(Type type)
         {                      
-            UmbracoCustomDataTypeAttribute customDataTypeAttribute = type.GetCustomAttribute<UmbracoCustomDataTypeAttribute>();
-            if (customDataTypeAttribute == null)
+            UmbracoDataTypeAttribute dataTypeAttribute = type.GetCustomAttribute<UmbracoDataTypeAttribute>();
+            if (dataTypeAttribute == null)
             {
                 return;
             }
@@ -283,23 +290,26 @@ namespace Umbraco.Inception.CodeFirst
             {
                 var dataTypeService = ApplicationContext.Current.Services.DataTypeService;
 
-                List<IDataTypeDefinition> PropertyEditorAliases = dataTypeService.GetDataTypeDefinitionByPropertyEditorAlias(customDataTypeAttribute.PropertyEditorAlias).ToList(); // Obtains all the property editor alias names.
+                List<IDataTypeDefinition> dataTypeDefinitions = dataTypeService.GetDataTypeDefinitionByPropertyEditorAlias(dataTypeAttribute.PropertyEditorAlias).ToList(); // Obtains all the property editor alias names.
 
-                bool isNameInDatabase = PropertyEditorAliases.Exists(x => x.Name == customDataTypeAttribute.DataTypeName); // Checks to see if the data type name exist.
+                var matchingDataTypeDefinition = dataTypeDefinitions.SingleOrDefault(x => x.Name == dataTypeAttribute.DataTypeName); // Checks to see if the data type name exist.
 
-                /* If not, create a new datatype based on the property editor used in the DataTypeDefinition below */
-                if (!isNameInDatabase)
+                /* If not, create a new datatype based on the property editor.
+                 * Do not try to update an existing data type. For the data type itself, Umbraco throws a DuplicateNameException. 
+                 * Calling dataTypeService.SavePreValues works, but wipes out all the content data even for existing prevalues. Too dangerous to use.
+                 */
+                if (matchingDataTypeDefinition == null)
                 {
-                    DataTypeDefinition dataTypeDefinition = new DataTypeDefinition(-1, customDataTypeAttribute.PropertyEditorAlias);
-                    dataTypeDefinition.Name = customDataTypeAttribute.DataTypeName;
-                    dataTypeDefinition.DatabaseType = customDataTypeAttribute.DatabaseType;
-                    var preValuesAttributeProperty = customDataTypeAttribute.PreValues;  // error check needs to be added.
+                    matchingDataTypeDefinition = new DataTypeDefinition(-1, dataTypeAttribute.PropertyEditorAlias);
+                    matchingDataTypeDefinition.Name = dataTypeAttribute.DataTypeName;
+                    matchingDataTypeDefinition.DatabaseType = dataTypeAttribute.DatabaseType;
+                    dataTypeService.Save(matchingDataTypeDefinition);
 
-                    var preValuesObjInstance = Activator.CreateInstance(preValuesAttributeProperty);
-                    var preValuesObjType = preValuesObjInstance.GetType();
-                    IDictionary<string, PreValue> preValues = (IDictionary<string, PreValue>)preValuesObjType.GetProperty("PreValues").GetValue(preValuesObjInstance, null);
+                    var preValueProviderType = dataTypeAttribute.PreValues; // error check needs to be added.
+                    var preValueProviderInstance = Activator.CreateInstance(preValueProviderType);
+                    var preValues = ((IPreValueProvider) preValueProviderInstance).PreValues;
 
-                    dataTypeService.SaveDataTypeAndPreValues(dataTypeDefinition, preValues);
+                    dataTypeService.SaveDataTypeAndPreValues(matchingDataTypeDefinition, preValues);
                 }
             }
         }

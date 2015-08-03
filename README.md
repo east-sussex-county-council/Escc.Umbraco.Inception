@@ -1,9 +1,9 @@
 Umbraco Inception
 =================
 
-A code first approach for Umbraco (7)
+A code first approach for Umbraco 7.
 
-Created by [Qite](http://qite.be "Qite Intelligent IT")
+Created by [Qite](http://qite.be "Qite Intelligent IT") and modified by East Sussex County Council.
 
 ## How to install
 
@@ -133,6 +133,25 @@ f.ex:
 If it already exists then it will look for changes.
 
 **Be aware that some changes you make to the attributes can cause major structural changes of the contentType and Umbraco might remove existing data.**
+
+## Creating and updating data types
+
+To create a data type, create a class and decorate it with an `UmbracoDataType` attribute. It is useful, but not required, to specify the data type name and property editor as class constants so that you can reference them again when creating properties based on the data type.
+
+The third argument of the `UmbracoDataType` attribute takes the `Type` of an `IPreValueProvider` implementation. This can be the same class (as shown here) or a separate one. This approach allows the `IPreValueProvider` to create prevalues in code rather than being restricted to strings specified directly in the attribute.  
+
+    [UmbracoDataType(DataTypeName, PropertyEditor, typeof(MyDataType), DataTypeDatabaseType.Nvarchar)]
+	public class MyDataType : IPreValueProvider
+	{
+	    public const string DataTypeName = "My data type";
+	    public const string PropertyEditor = BuiltInUmbracoDataTypes.CheckBoxList;
+  		
+		public IDictionary<string, PreValue> PreValues { get; private set; }
+
+        // ... code to create prevalues ... //
+	}
+
+Once created, you cannot update an existing data type. This is because Umbraco throws a `DuplicateNameException` if you try to modify the data type itself, or wipes out all existing data if you update the prevalues. The recommended approach instead is to modify your type in the Umbraco back office, but also update your code first data type definitions so that any future installations are up-to-date. 
 
 ##Ok, so far so good but now what
 

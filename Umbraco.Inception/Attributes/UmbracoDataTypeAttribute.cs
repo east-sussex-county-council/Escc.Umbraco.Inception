@@ -5,11 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Core.Models;
 using Umbraco.Core.Services;
+using Umbraco.Inception.BL;
 
 namespace Umbraco.Inception.Attributes
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class UmbracoCustomDataTypeAttribute : Attribute
+    public class UmbracoDataTypeAttribute : Attribute
     {
 
         public string DataTypeName { get; set; }
@@ -22,8 +23,8 @@ namespace Umbraco.Inception.Attributes
         /// </summary>
         /// <param name="dataTypeName">Friendly name of the data type</param>
         /// <param name="propertyEditorAlias">Alias of the data type</param>
-        /// <param name="preValues">Initial values</param>      
-        public UmbracoCustomDataTypeAttribute(string dataTypeName, string propertyEditorAlias, Type preValues, DataTypeDatabaseType dataTypeDatabaseType)
+        /// <param name="preValues">The <c>System.Type</c> of a class which implements <see cref="IPreValueProvider"/></param>      
+        public UmbracoDataTypeAttribute(string dataTypeName, string propertyEditorAlias, Type preValues, DataTypeDatabaseType dataTypeDatabaseType)
         {
             DataTypeName = dataTypeName;
             PropertyEditorAlias = propertyEditorAlias;
