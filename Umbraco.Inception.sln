@@ -1,21 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Umbraco.Inception", "Umbraco.Inception\Umbraco.Inception.csproj", "{8780EA62-41DA-4A2E-A51A-6960EFBEF837}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AE22E2A0-8F96-41A8-B75F-0BDD273ECCE1}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		LICENCE.md = LICENCE.md
 		README.md = README.md
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{7B23C511-BA59-469D-AF97-C008E1F65703}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
 Project("{E09DD79A-4488-4AB9-8D3F-A7EEE78BF432}") = "Escc.Umbraco.Inception.NuGet", "Escc.Umbraco.Inception.NuGet\Escc.Umbraco.Inception.NuGet.nuproj", "{F8D31CFF-8003-4EEF-932A-847C272A8E80}"

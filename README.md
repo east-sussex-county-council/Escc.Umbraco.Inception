@@ -1,15 +1,8 @@
-Umbraco Inception
-=================
+# Umbraco Inception
 
 A code first approach for Umbraco 7.
 
 Created by [Qite](http://qite.be "Qite Intelligent IT") and modified by East Sussex County Council.
-
-## How to install
-
-Install the Umbraco.Inception package from [nuget]("http://www.nuget.org/packages/Umbraco.Inception/").
-
-Or download the package from the [Umbraco Package Repository](http://our.umbraco.org/projects/developer-tools/umbraco-inception)
 
 ## Getting started
 
@@ -72,6 +65,7 @@ and override the following methods:
 - public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
 - public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
 
+## Adding tabs
 
 If you would like to group properties to a specific tab you create a tab class.
 
@@ -106,9 +100,27 @@ public class Person:UmbracoGeneratedBase
 
 Note that this can be great for multi-lingual sites.
 
+## Creating additional templates
+
+Most document types will use just one default template, but sometimes you need extra templates to present multiple views of your content. In this case you can add `[UmbracoTemplate]` properties to your `[UmbracoContentType]`.
+
+```csharp
+[UmbracoContentType("Name","alias", ...)]
+public class Person:UmbracoGeneratedBase
+{
+    [UmbracoTemplate(DisplayName="Example template 1", Alias="ExampleAlias1")]
+    public string ExtraTemplate1 { get; set; }
+    
+    [UmbracoTemplate(DisplayName="Example template 2", Alias="ExampleAlias2")]
+    public string ExtraTemplate2 {get;set;}
+}
+```
+
+## Creating content types
+
 Next step is to register your model.
-This can be done on Application Startup
-f.ex:
+This can be done on application startup as shown below, though this creates a performance penalty and you may prefer to do it on-demand by placing any calls to `UmbracoCodeFirstInitializer` in a Web API controller.
+
 
 ```csharp
     public class RegisterEvents : ApplicationEventHandler
@@ -140,6 +152,7 @@ To create a data type, create a class and decorate it with an `UmbracoDataType` 
 
 The third argument of the `UmbracoDataType` attribute takes the `Type` of an `IPreValueProvider` implementation. This can be the same class (as shown here) or a separate one. This approach allows the `IPreValueProvider` to create prevalues in code rather than being restricted to strings specified directly in the attribute.  
 
+```csharp
     [UmbracoDataType(DataTypeName, PropertyEditor, typeof(MyDataType), DataTypeDatabaseType.Nvarchar)]
 	public class MyDataType : IPreValueProvider
 	{
@@ -150,6 +163,7 @@ The third argument of the `UmbracoDataType` attribute takes the `Type` of an `IP
 
         // ... code to create prevalues ... //
 	}
+```
 
 Once created, you cannot update an existing data type. This is because Umbraco throws a `DuplicateNameException` if you try to modify the data type itself, or wipes out all existing data if you update the prevalues. The recommended approach instead is to modify your type in the Umbraco back office, but also update your code first data type definitions so that any future installations are up-to-date. 
 
@@ -189,7 +203,7 @@ public void SomeMethodInAController(int contentId)
 
 ##Check out the demo project
 
-We provided a demo project at [Github](https://github.com/Qite/InceptionDemo). 
+Qite provided a demo project at [Github](https://github.com/Qite/InceptionDemo). 
 
 ##Cool, where can I help
 - Well by testing it you might discover something we forgot or some situation we haven't faced yet.
@@ -198,10 +212,11 @@ Don't hesitate to create a [bug report](https://github.com/Qite/Umbraco-Inceptio
 - Solve your own problem, reporting a bug is cool but solving it is just plain awesome!
 
 ##Contact
-Any further questions may be directed here on github or at florian@qite.be
+Any further questions may be directed here on github.
 
 ##Thanks to
 We would like to thank everyone who has made any (small or big) contribution to this project:
 
+- Florian Verdonck and Dries Cauwels at Qite
 - JimBobSquarePants
 - mmisztal1980 
