@@ -162,7 +162,8 @@ namespace Umbraco.Inception.CodeFirst
             var alreadyAllowed = false;
             foreach (var allowedTemplate in allowedTemplates)
             {
-                if (allowedTemplate.Alias == template.Alias)
+                //  Use .Id because Umbraco 7.4.x throws an exception accessing .Alias due to an internal cast 
+                if (allowedTemplate.Id == template.Id)
                 {
                     alreadyAllowed = true;
                     break;
