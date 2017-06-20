@@ -373,11 +373,14 @@ namespace Umbraco.Inception.CodeFirst
                     matchingDataTypeDefinition.DatabaseType = dataTypeAttribute.DatabaseType;
                     dataTypeService.Save(matchingDataTypeDefinition);
 
-                    var preValueProviderType = dataTypeAttribute.PreValues; // error check needs to be added.
-                    var preValueProviderInstance = Activator.CreateInstance(preValueProviderType);
-                    var preValues = ((IPreValueProvider) preValueProviderInstance).PreValues;
+                    if (dataTypeAttribute.PreValues != null)
+                    {
+                        var preValueProviderType = dataTypeAttribute.PreValues;
+                        var preValueProviderInstance = Activator.CreateInstance(preValueProviderType);
+                        var preValues = ((IPreValueProvider) preValueProviderInstance).PreValues;
 
-                    dataTypeService.SaveDataTypeAndPreValues(matchingDataTypeDefinition, preValues);
+                        dataTypeService.SaveDataTypeAndPreValues(matchingDataTypeDefinition, preValues);
+                    }
                 }
             }
         }

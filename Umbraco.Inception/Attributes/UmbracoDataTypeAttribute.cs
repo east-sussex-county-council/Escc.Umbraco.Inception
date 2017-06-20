@@ -23,7 +23,8 @@ namespace Umbraco.Inception.Attributes
         /// </summary>
         /// <param name="dataTypeName">Friendly name of the data type</param>
         /// <param name="propertyEditorAlias">Alias of the data type</param>
-        /// <param name="preValues">The <c>System.Type</c> of a class which implements <see cref="IPreValueProvider"/></param>      
+        /// <param name="preValues">The <c>System.Type</c> of a class which implements <see cref="IPreValueProvider" /></param>
+        /// <param name="dataTypeDatabaseType">Type of the data type database.</param>
         public UmbracoDataTypeAttribute(string dataTypeName, string propertyEditorAlias, Type preValues, DataTypeDatabaseType dataTypeDatabaseType)
         {
             DataTypeName = dataTypeName;
